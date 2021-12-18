@@ -42,4 +42,4 @@ colnames(mean_std_data) <- c(desc_var_name, "activity", "subject")
 independent_tidy_df <- mean_std_data %>%
   group_by(activity, subject) %>%
   summarise_at(vars(1:79), mean)
-
+write.table(independent_tidy_df, "TidyData.txt", row.names = FALSE)
