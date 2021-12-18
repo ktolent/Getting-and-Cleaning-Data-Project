@@ -11,6 +11,7 @@ The following section describes the dataset from which my project is based on, a
 For this project, I used the Human Activity Recognition Using Smartphones Dataset which can be found here.   
  **WARNING: Do not click if you do NOT want to download the file.**  
 (https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip)  
+    
 This dataset was put together following experiments performed by researchers at Smartlab - Non Linear Complex Systems Laboratory.  
 The experiments have been carried out with a group of 30 volunteers within an age bracket of 19-48 years. These volunteers were divided into 2 groups:
 * 70% were selected to generate the *training dataset*.
@@ -42,3 +43,26 @@ Following this, I then use `grep` to search for all elements that either contain
   
 I then use **index** to subset the columns of **merged_df**. I also include the last 2 columns in the subsetting of **merged_df** as these refer to the **activity** and the **subject** respectively, which will be needed in the next steps.  
 #### Part 3
+Part 3 is where I replace the elements of the **activity** variable into something more descriptive. I load the `dplyr` package so I can use the `mutate` function. In using the `mutate` function, I create a factor variable and then to replace the elements, I relied on the activity_labels.txt files which specifies which activity corresponds to each number. Here it shows that:
+* 1 corresponds to walking
+* 2 corresponds to walking_upstairs
+* 3 corresponds to walking_downstairs
+* 4 corresponds to sitting
+* 5 corresponds to standing
+* 6 corresponds to laying  
+   
+I used these activity labels accordingly, with the `mutate` function. The results are saved in **mean_std_data**.
+#### Part 4
+If part 3 replaces the elements of the activity variable with something more descriptive, Part 4 replaces the variable names with more descriptive names which up to this point are simply named "V1", "V2", "V3", and so on. To do this, I run `grep` again to search for "mean()" or "std()" in the features dataset but this time I indicate `value=TRUE` to return the value of the elements where these two strings appear, instead of simply returning the indices. I save the results in a vector called **desc_var_name**.
+  
+I then use `colnames` to rename the variables in **mean_std_data**. However, these will only rename the measurement variables and not the last two variables which I added earlier in Part 1. So I have to indicate in `colnames` that the last two variables should retain their names as **activity** and **subject**, respectively.
+#### Part 5
+Finally, Part 5 builds the independent, tidy set, based on the cleaned dataset following the steps above. Here, I simply take the **mean_std_data** dataset, use `group_by` function to group the observations by **activity** and then **subject** and then use `summarise_at` to calculate the mean of the measurement variables by activity and by subject.
+  
+The resulting dataset is saved in **independent_tidy_df**. Its dimensions are 180 observations and 81 variables. This dataset shows the mean of each measurement variable per activity per subject (aka volunteer). This data is tidy because:
+* each variable is contained in a column
+* each observation is contained in a row
+* each column represents one variable only
+## Author
+Original work by: Krisna Tolentino
+Project submitted December 20, 2021
