@@ -64,5 +64,5 @@ The resulting dataset is saved in **independent_tidy_df**. Its dimensions are 18
 * each observation is contained in a row
 * each column represents one variable only
 ## Author
-Original work by: Krisna Tolentino
+Original work by: Krisna Tolentino  
 Project submitted December 20, 2021
