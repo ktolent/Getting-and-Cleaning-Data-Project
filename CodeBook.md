@@ -1,30 +1,263 @@
----
-title: "CodeBook"
-author: "Krisna"
-date: "18/12/2021"
-output: html_document
----
+# CodeBook
+**Author: Krisna Tolentino**  
+**Date: December 21, 2021**
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+## Getting and Cleaning Data Project
+
+The purpose of this project is to demonstrate the student's ability to collect, work with, and clean a data set. The goal is to prepare tidy data that can be used for later analysis. The student will be graded by peers on a series of yes/no questions related to the project. The student will be required to submit:    
+1. a tidy data set as described below,   
+2. a link to a Github repository with the script for performing the analysis, and   
+3. a code book that describes the variables, the data, and any transformations or work that was performed to clean up the data called CodeBook.md.   
+  
+The student should also include a README.md in the repo with the scripts. This repo explains how all of the scripts work and how they are connected.   
+    
+One of the most exciting areas in all of data science right now is wearable computing - see for example this article . Companies like Fitbit, Nike, and Jawbone Up are racing to develop the most advanced algorithms to attract new users. The data linked to from the course website represent data collected from the accelerometers from the Samsung Galaxy S smartphone. A full description is available at the site where the data was obtained:  
+   
+<http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones>  
+   
+Here are the data for the project:  
+  
+<https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip>  
+   
+THe student should create one R script called run_analysis.R that does the following:   
+1. Merges the training and the test sets to create one data set.  
+2. Extracts only the measurements on the mean and standard deviation for each measurement.   
+3. Uses descriptive activity names to name the activities in the data set.  
+4. Appropriately labels the data set with descriptive variable names.   
+5. From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.   
+  
+## Description of the data
+The dataset comes from UC Irvine Machine Learning Repository and is referred to as "Human Activity Recognition Using Smartphones Data Set."
+
+### Description of the dataset
+The experiments have been carried out with a group of 30 volunteers within an age bracket of 19-48 years. Each person performed six activities (WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING) wearing a smartphone (Samsung Galaxy S II) on the waist. Using its embedded accelerometer and gyroscope, the researchers captured 3-axial linear acceleration and 3-axial angular velocity at a constant rate of 50Hz. The experiments have been video-recorded to label the data manually. The obtained dataset has been randomly partitioned into two sets, where 70% of the volunteers was selected for generating the training data and 30% the test data.   
+  
+The sensor signals (accelerometer and gyroscope) were pre-processed by applying noise filters and then sampled in fixed-width sliding windows of 2.56 sec and 50% overlap (128 readings/window). The sensor acceleration signal, which has gravitational and body motion components, was separated using a Butterworth low-pass filter into body acceleration and gravity. The gravitational force is assumed to have only low frequency components, therefore a filter with 0.3 Hz cutoff frequency was used. From each window, a vector of features was obtained by calculating variables from the time and frequency domain.  
+  
+For each record it is provided:  
+* Triaxial acceleration from the accelerometer (total acceleration) and the estimated body acceleration.  
+* Triaxial Angular velocity from the gyroscope.   
+* A 561-feature vector with time and frequency domain variables.   
+* Its activity label.   
+* An identifier of the subject who carried out the experiment.  
+  
+### Description of abbreviations of measurements
+1. leading t or f is based on time or frequency measurements.  
+2. Body = related to body movement.  
+3. Gravity = acceleration of gravity  
+4. Acc = accelerometer measurement  
+5. Gyro = gyroscopic measurements  
+6. Jerk = sudden movement acceleration  
+7. Mag = magnitude of movement  
+8. mean and SD are calculated for each subject for each activity for each mean and SD measurements.  
+  
+The units given are g’s for the accelerometer and rad/sec for the gyro and g/sec and rad/sec/sec for the corresponding jerks.  
+  
+These signals were used to estimate variables of the feature vector for each pattern:  
+‘-XYZ’ is used to denote 3-axial signals in the X, Y and Z directions. They total 33 measurements including the 3 dimensions - the X,Y, and Z axes.
+
+* tBodyAcc-XYZ  
+* tGravityAcc-XYZ  
+* tBodyAccJerk-XYZ  
+* tBodyGyro-XYZ  
+* tBodyGyroJerk-XYZ  
+* tBodyAccMag  
+* tGravityAccMag  
+* tBodyAccJerkMag  
+* tBodyGyroMag  
+* tBodyGyroJerkMag  
+* fBodyAcc-XYZ  
+* fBodyAccJerk-XYZ  
+* fBodyGyro-XYZ  
+* fBodyAccMag  
+* fBodyAccJerkMag  
+* fBodyGyroMag  
+* fBodyGyroJerkMag  
+  
+The set of variables that were estimated from these signals are:  
+mean(): Mean value  
+std(): Standard deviation  
+
+## Download the data
+
 ```
+# Download file
+url <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
+download.file(url, 
+  "C:/Users/Admin/Documents/R Projects/Getting and Cleaning Data Project/file.zip")
+zipfile <- unzip("C:/Users/Admin/Documents/R Projects/Getting and Cleaning Data Project/file.zip")
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
 ```
+### Files in UCI HAR Dataset that will be used are:
+1. TEST FILES  
+* test/X_test.txt  
+* test/Y_test.txt  
+* test/subject_test.txt  
+    
+2. TRAIN FILES  
+* train/X_train.txt  
+* train/Y_train.txt  
+* train/subject_train.txt  
+  
+3. features.txt and activity_labels.txt  
+  
 
-## Including Plots
+## 1. Merge the training and test dataset to create one dataset.
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
 ```
+#Part 1: Merge training and test data sets into one data set
+#Read test data
+test_set <- read.table("./UCI HAR Dataset/test/X_test.txt")
+test_labels <- read.table("./UCI HAR Dataset/test/Y_test.txt", col.names=("activity"))
+subject_test <- read.table("./UCI HAR Dataset/test/subject_test.txt", col.names=("subject"))
+test_df <- cbind(test_set, test_labels, subject_test)
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+#Read train data
+train_set <- read.table("./UCI HAR Dataset/train/X_train.txt")
+train_labels <- read.table("./UCI HAR Dataset/train/Y_train.txt", col.names=("activity"))
+subject_train <- read.table("./UCI HAR Dataset/train/subject_train.txt", col.names=("subject"))
+train_df <- cbind(train_set, train_labels, subject_train)
+
+#Merge test and train
+merged_df <- rbind(test_df, train_df)
+```
+## 2. Extract only the measurements on the mean and standard deviation for each measurement.
+```
+#Part 2: Extract only the measurements on the mean and st.dev. for each measurement.
+feature <- read.table("./UCI HAR Dataset/features.txt")
+index <- grep("mean()|std()", feature$V2)
+mean_std_data <- merged_df[,c(index, 562:563)]
+```
+## 3. Use descriptive activity names to name the activities in the dataset
+```
+library(dplyr)
+mean_std_data <- mutate(mean_std_data, activity = factor(1*activity, labels = c("walking", "walking_upstairs",
+                "walking_downstairs", "sitting", "standing", "laying")))
+head(select(mean_std_data, activity), 20)
+```
+``````
+   activity
+1  standing
+2  standing
+3  standing
+4  standing
+5  standing
+6  standing
+7  standing
+8  standing
+9  standing
+10 standing
+11 standing
+12 standing
+13 standing
+14 standing
+15 standing
+16 standing
+17 standing
+18 standing
+19 standing
+20 standing
+``````
+## 4. Appropriately label the dataset with descriptive variable names
+```
+#Part 4: Label the dataset with descriptive variable names
+desc_var_name <- grep("mean()|std()", feature$V2, value=TRUE)
+colnames(mean_std_data) <- c(desc_var_name, "activity", "subject")
+head(str(mean_std_data),2)
+```
+``````
+'data.frame':	10299 obs. of  81 variables:
+ $ tBodyAcc-mean()-X              : num  0.257 0.286 0.275 0.27 0.275 ...
+ $ tBodyAcc-mean()-Y              : num  -0.0233 -0.0132 -0.0261 -0.0326 -0.0278 ...
+ $ tBodyAcc-mean()-Z              : num  -0.0147 -0.1191 -0.1182 -0.1175 -0.1295 ...
+ $ tBodyAcc-std()-X               : num  -0.938 -0.975 -0.994 -0.995 -0.994 ...
+ $ tBodyAcc-std()-Y               : num  -0.92 -0.967 -0.97 -0.973 -0.967 ...
+ $ tBodyAcc-std()-Z               : num  -0.668 -0.945 -0.963 -0.967 -0.978 ...
+ $ tGravityAcc-mean()-X           : num  0.936 0.927 0.93 0.929 0.927 ...
+ $ tGravityAcc-mean()-Y           : num  -0.283 -0.289 -0.288 -0.293 -0.303 ...
+ $ tGravityAcc-mean()-Z           : num  0.115 0.153 0.146 0.143 0.138 ...
+ $ tGravityAcc-std()-X            : num  -0.925 -0.989 -0.996 -0.993 -0.996 ...
+ $ tGravityAcc-std()-Y            : num  -0.937 -0.984 -0.988 -0.97 -0.971 ...
+ $ tGravityAcc-std()-Z            : num  -0.564 -0.965 -0.982 -0.992 -0.968 ...
+ $ tBodyAccJerk-mean()-X          : num  0.072 0.0702 0.0694 0.0749 0.0784 ...
+ $ tBodyAccJerk-mean()-Y          : num  0.04575 -0.01788 -0.00491 0.03227 0.02228 ...
+ $ tBodyAccJerk-mean()-Z          : num  -0.10604 -0.00172 -0.01367 0.01214 0.00275 ...
+ $ tBodyAccJerk-std()-X           : num  -0.907 -0.949 -0.991 -0.991 -0.992 ...
+ $ tBodyAccJerk-std()-Y           : num  -0.938 -0.973 -0.971 -0.973 -0.979 ...
+ $ tBodyAccJerk-std()-Z           : num  -0.936 -0.978 -0.973 -0.976 -0.987 ...
+ $ tBodyGyro-mean()-X             : num  0.11998 -0.00155 -0.04821 -0.05664 -0.05999 ...
+ $ tBodyGyro-mean()-Y             : num  -0.0918 -0.1873 -0.1663 -0.126 -0.0847 ...
+ $ tBodyGyro-mean()-Z             : num  0.1896 0.1807 0.1542 0.1183 0.0787 ...
+ $ tBodyGyro-std()-X              : num  -0.883 -0.926 -0.973 -0.968 -0.975 ...
+ $ tBodyGyro-std()-Y              : num  -0.816 -0.93 -0.979 -0.975 -0.978 ...
+ $ tBodyGyro-std()-Z              : num  -0.941 -0.968 -0.976 -0.963 -0.968 ...
+ $ tBodyGyroJerk-mean()-X         : num  -0.2049 -0.1387 -0.0978 -0.1022 -0.0918 ...
+ $ tBodyGyroJerk-mean()-Y         : num  -0.1745 -0.0258 -0.0342 -0.0447 -0.029 ...
+ $ tBodyGyroJerk-mean()-Z         : num  -0.0934 -0.0714 -0.06 -0.0534 -0.0612 ...
+ $ tBodyGyroJerk-std()-X          : num  -0.901 -0.962 -0.984 -0.984 -0.988 ...
+ $ tBodyGyroJerk-std()-Y          : num  -0.911 -0.956 -0.988 -0.99 -0.992 ...
+ $ tBodyGyroJerk-std()-Z          : num  -0.939 -0.981 -0.976 -0.981 -0.982 ...
+ $ tBodyAccMag-mean()             : num  -0.867 -0.969 -0.976 -0.974 -0.976 ...
+ $ tBodyAccMag-std()              : num  -0.705 -0.954 -0.979 -0.977 -0.977 ...
+ $ tGravityAccMag-mean()          : num  -0.867 -0.969 -0.976 -0.974 -0.976 ...
+ $ tGravityAccMag-std()           : num  -0.705 -0.954 -0.979 -0.977 -0.977 ...
+ $ tBodyAccJerkMag-mean()         : num  -0.93 -0.974 -0.982 -0.983 -0.987 ...
+ $ tBodyAccJerkMag-std()          : num  -0.896 -0.941 -0.971 -0.975 -0.989 ...
+ $ tBodyGyroMag-mean()            : num  -0.796 -0.898 -0.939 -0.947 -0.957 ...
+ $ tBodyGyroMag-std()             : num  -0.762 -0.911 -0.972 -0.97 -0.969 ...
+ $ tBodyGyroJerkMag-mean()        : num  -0.925 -0.973 -0.987 -0.989 -0.99 ...
+ $ tBodyGyroJerkMag-std()         : num  -0.894 -0.944 -0.984 -0.986 -0.99 ...
+ $ fBodyAcc-mean()-X              : num  -0.919 -0.961 -0.992 -0.993 -0.992 ...
+ $ fBodyAcc-mean()-Y              : num  -0.918 -0.964 -0.965 -0.968 -0.969 ...
+ $ fBodyAcc-mean()-Z              : num  -0.789 -0.957 -0.967 -0.967 -0.98 ...
+ $ fBodyAcc-std()-X               : num  -0.948 -0.984 -0.995 -0.996 -0.995 ...
+ $ fBodyAcc-std()-Y               : num  -0.925 -0.97 -0.974 -0.977 -0.967 ...
+ $ fBodyAcc-std()-Z               : num  -0.636 -0.942 -0.962 -0.969 -0.978 ...
+ $ fBodyAcc-meanFreq()-X          : num  0.0111 0.3521 0.1804 0.0627 -0.0189 ...
+ $ fBodyAcc-meanFreq()-Y          : num  0.12125 0.17455 0.13346 0.26172 -0.00998 ...
+ $ fBodyAcc-meanFreq()-Z          : num  -0.5229 -0.3207 0.1827 0.1518 0.0952 ...
+ $ fBodyAccJerk-mean()-X          : num  -0.9 -0.944 -0.991 -0.991 -0.991 ...
+ $ fBodyAccJerk-mean()-Y          : num  -0.937 -0.969 -0.973 -0.972 -0.98 ...
+ $ fBodyAccJerk-mean()-Z          : num  -0.924 -0.973 -0.972 -0.97 -0.983 ...
+ $ fBodyAccJerk-std()-X           : num  -0.924 -0.962 -0.992 -0.992 -0.994 ...
+ $ fBodyAccJerk-std()-Y           : num  -0.943 -0.98 -0.971 -0.975 -0.979 ...
+ $ fBodyAccJerk-std()-Z           : num  -0.948 -0.981 -0.972 -0.981 -0.989 ...
+ $ fBodyAccJerk-meanFreq()-X      : num  0.451 0.473 0.271 0.277 0.18 ...
+ $ fBodyAccJerk-meanFreq()-Y      : num  0.1372 0.1672 -0.2722 -0.0383 -0.1392 ...
+ $ fBodyAccJerk-meanFreq()-Z      : num  -0.1803 -0.2431 -0.0825 0.0218 0.1009 ...
+ $ fBodyGyro-mean()-X             : num  -0.824 -0.923 -0.973 -0.972 -0.976 ...
+ $ fBodyGyro-mean()-Y             : num  -0.808 -0.926 -0.981 -0.981 -0.98 ...
+ $ fBodyGyro-mean()-Z             : num  -0.918 -0.968 -0.972 -0.967 -0.969 ...
+ $ fBodyGyro-std()-X              : num  -0.903 -0.927 -0.973 -0.967 -0.974 ...
+ $ fBodyGyro-std()-Y              : num  -0.823 -0.932 -0.977 -0.972 -0.977 ...
+ $ fBodyGyro-std()-Z              : num  -0.956 -0.97 -0.979 -0.965 -0.97 ...
+ $ fBodyGyro-meanFreq()-X         : num  0.184 0.0181 -0.4791 -0.497 -0.4275 ...
+ $ fBodyGyro-meanFreq()-Y         : num  -0.0593 -0.2273 -0.2101 -0.4999 -0.2781 ...
+ $ fBodyGyro-meanFreq()-Z         : num  0.4381 -0.1517 0.0493 -0.2589 -0.2913 ...
+ $ fBodyAccMag-mean()             : num  -0.791 -0.954 -0.976 -0.973 -0.978 ...
+ $ fBodyAccMag-std()              : num  -0.711 -0.96 -0.984 -0.982 -0.979 ...
+ $ fBodyAccMag-meanFreq()         : num  -0.4835 0.2035 0.3425 0.3312 0.0711 ...
+ $ fBodyBodyAccJerkMag-mean()     : num  -0.895 -0.945 -0.971 -0.972 -0.987 ...
+ $ fBodyBodyAccJerkMag-std()      : num  -0.896 -0.934 -0.97 -0.978 -0.99 ...
+ $ fBodyBodyAccJerkMag-meanFreq() : num  -0.0354 -0.4912 0.1407 0.1486 0.4222 ...
+ $ fBodyBodyGyroMag-mean()        : num  -0.771 -0.924 -0.975 -0.976 -0.977 ...
+ $ fBodyBodyGyroMag-std()         : num  -0.797 -0.917 -0.974 -0.971 -0.97 ...
+ $ fBodyBodyGyroMag-meanFreq()    : num  -0.0474 -0.0315 -0.1688 -0.2856 -0.3491 ...
+ $ fBodyBodyGyroJerkMag-mean()    : num  -0.89 -0.952 -0.986 -0.986 -0.99 ...
+ $ fBodyBodyGyroJerkMag-std()     : num  -0.907 -0.938 -0.983 -0.986 -0.991 ...
+ $ fBodyBodyGyroJerkMag-meanFreq(): num  0.0716 -0.4012 0.0629 0.1167 -0.1217 ...
+ $ activity                       : Factor w/ 6 levels "walking","walking_upstairs",..: 5 5 5 5 5 5 5 5 5 5 ...
+ $ subject                        : int  2 2 2 2 2 2 2 2 2 2 ...
+NULL
+``````
+## 5. From the dataset in step 4, create a second, independent tidy data set with the average of each variable for each activity and each subject. 
+```
+#Part 5: From the dataset in step 4, create a second, independent tidy data set 
+#with the average of each variable for each activity and each subject.
+independent_tidy_df <- mean_std_data %>%
+  group_by(activity, subject) %>%
+  summarise_at(vars(1:79), mean)
+write.table(independent_tidy_df, "TidyData.txt", row.names = FALSE)
+```
+**The tidy data set is a set of variables for each activity and each subject. 10299 instances are split into 180 groups (30 subjects and 6 activities) and 66 mean and standard deviation features are averaged for each group. The resulting data table has 180 rows and 81 columns – 33 Mean variables + 13 Mean Frequency + 33 Standard deviation variables + 1 Subject (1 of of the 30 test subjects) + 1 Activity. The tidy data set’s first row is the header containing the names for each column.**
+
