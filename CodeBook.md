@@ -50,9 +50,7 @@ For each record it is provided:
 6. Jerk = sudden movement acceleration  
 7. Mag = magnitude of movement  
 8. mean and SD are calculated for each subject for each activity for each mean and SD measurements.  
-  
-The units given are g’s for the accelerometer and rad/sec for the gyro and g/sec and rad/sec/sec for the corresponding jerks.  
-  
+   
 These signals were used to estimate variables of the feature vector for each pattern:  
 ‘-XYZ’ is used to denote 3-axial signals in the X, Y and Z directions. They total 33 measurements including the 3 dimensions - the X,Y, and Z axes.
 
@@ -74,10 +72,6 @@ These signals were used to estimate variables of the feature vector for each pat
 * fBodyGyroMag  
 * fBodyGyroJerkMag  
   
-The set of variables that were estimated from these signals are:  
-mean(): Mean value  
-std(): Standard deviation  
-
 ## Download the data
 
 ```
@@ -88,7 +82,7 @@ download.file(url,
 zipfile <- unzip("C:/Users/Admin/Documents/R Projects/Getting and Cleaning Data Project/file.zip")
 
 ```
-### Files in UCI HAR Dataset that will be used are:
+**Files in UCI HAR Dataset that will be used are:**
 1. TEST FILES  
 * test/X_test.txt  
 * test/Y_test.txt  
@@ -259,5 +253,6 @@ independent_tidy_df <- mean_std_data %>%
   summarise_at(vars(1:79), mean)
 write.table(independent_tidy_df, "TidyData.txt", row.names = FALSE)
 ```
-**The tidy data set is a set of variables for each activity and each subject. 10299 instances are split into 180 groups (30 subjects and 6 activities) and 66 mean and standard deviation features are averaged for each group. The resulting data table has 180 rows and 81 columns – 33 Mean variables + 13 Mean Frequency + 33 Standard deviation variables + 1 Subject (1 of of the 30 test subjects) + 1 Activity. The tidy data set’s first row is the header containing the names for each column.**
+#### Why is this dataset (independent_tidy_df) considered tidy?
+**The `independent_tidy_df` is a tidy data set because it is a set of variables for each activity and each subject. The 10299 observations have been split into 180 groups. These correspond to 30 subjects doing 6 activities each. 66 mean and standard deviation features were averaged for each group. I also included the mean frequency variables because the instructions did not specify if these should be omitted from the calculations. The resulting data table has 180 rows and 81 columns which include 33 mean variables + 13 mean frequency + 33 Standard deviation variables + 1 subject variable + 1 Activity variable. The tidy data set’s first row is the header containing the names for each column.**
 
