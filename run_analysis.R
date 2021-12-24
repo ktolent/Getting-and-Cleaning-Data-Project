@@ -36,6 +36,7 @@ head(select(mean_std_data, activity), 20)
 #Part 4: Label the dataset with descriptive variable names
 desc_var_name <- grep("mean()|std()", feature$V2, value=TRUE)
 colnames(mean_std_data) <- c(desc_var_name, "activity", "subject")
+head(str(mean_std_data),2)
 
 #Part 5: From the dataset in step 4, create a second, independent tidy data set 
 #with the average of each variable for each activity and each subject.
