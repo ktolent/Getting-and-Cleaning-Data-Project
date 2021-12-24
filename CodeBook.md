@@ -118,22 +118,22 @@ train_labels <- read.table("./UCI HAR Dataset/train/Y_train.txt", col.names=("ac
 subject_train <- read.table("./UCI HAR Dataset/train/subject_train.txt", col.names=("subject"))
 train_df <- cbind(train_set, train_labels, subject_train)
 
-#Merge test and train
+#Merge test and train datasets
 merged_df <- rbind(test_df, train_df)
 ```
 ## 2. Extract only the measurements on the mean and standard deviation for each measurement.
 ```
 #Part 2: Extract only the measurements on the mean and st.dev. for each measurement.
-feature <- read.table("./UCI HAR Dataset/features.txt")
-index <- grep("mean()|std()", feature$V2)
-mean_std_data <- merged_df[,c(index, 562:563)]
+feature <- read.table("./UCI HAR Dataset/features.txt") #read features file
+index <- grep("mean()|std()", feature$V2) #find mean and std vars
+mean_std_data <- merged_df[,c(index, 562:563)] #subset mean and std vars
 ```
 ## 3. Use descriptive activity names to name the activities in the dataset
 ```
-library(dplyr)
+library(dplyr) #load package
 mean_std_data <- mutate(mean_std_data, activity = factor(1*activity, labels = c("walking", "walking_upstairs",
-                "walking_downstairs", "sitting", "standing", "laying")))
-head(select(mean_std_data, activity), 20)
+                "walking_downstairs", "sitting", "standing", "laying"))) #descriptive labels
+head(select(mean_std_data, activity), 20) #check activity column
 ```
 ``````
    activity
@@ -161,9 +161,9 @@ head(select(mean_std_data, activity), 20)
 ## 4. Appropriately label the dataset with descriptive variable names
 ```
 #Part 4: Label the dataset with descriptive variable names
-desc_var_name <- grep("mean()|std()", feature$V2, value=TRUE)
-colnames(mean_std_data) <- c(desc_var_name, "activity", "subject")
-head(str(mean_std_data),2)
+desc_var_name <- grep("mean()|std()", feature$V2, value=TRUE) #find and store mean and std vars
+colnames(mean_std_data) <- c(desc_var_name, "activity", "subject") #use descriptive var names
+head(str(mean_std_data),2) #check headers
 ```
 ``````
 'data.frame':	10299 obs. of  81 variables:
